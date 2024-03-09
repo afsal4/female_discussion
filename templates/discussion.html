@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Raleway", sans-serif;
+      }
+      .main_container {
+        position: relative;
+      }
+      /* *********** */
+      /* **navbar** */
+      /* *********** */
+      nav {
+        background-color: #8a4d76;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
+        font-family: "Raleway", sans-serif;
+      }
+      
+      nav a#logo-link {
+        float: left;
+        margin-right: 2rem;
+      }
+      
+      nav ul {
+        float: right;
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      
+      nav li {
+        margin-right: 2rem;
+      }
+      nav li a {
+        text-decoration: none;
+        font-size: 1rem;
+      }
+      
+      nav a,
+      nav button {
+        color: #e3e1f0;
+        background-color: transparent;
+        border: none;
+      
+        cursor: pointer;
+        font-size: 1rem;
+        transition: color 0.2s ease-in-out;
+      }
+      
+      nav a:hover,
+      nav button:hover {
+        color: #e3e1f0;
+      }
+      
+      nav input[type="search"] {
+        background-color: #e3e1f0;
+        border-radius: 3px;
+        border: none;
+        color: black;
+        padding: 0.2rem;
+        width: 15rem;
+      }
+      
+      nav form {
+        display: flex;
+        align-items: center;
+      }
+      
+      nav form button {
+        background-color: #444;
+        border-radius: 3px;
+        border: none;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        margin-left: 1rem;
+      }
+      .search-btn {
+        height: 2.4rem;
+        border-radius: 6px;
+        border-color: white;
+      }
+      h1 {
+        text-align: center;
+        color: #8a4d76; /* Deep Purple */
+      }
+      /* *********** */
+      /* **question** */
+      /* *********** */
+      .question {
+        margin-top: 100px;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 3px 10px rgba(255, 107, 107, 0.368); /* Add shadow effect */
+        transition: transform 0.3s ease; /* Add transition effect */
+      }
+      
+      .question:hover {
+        transform: translateY(-5px); /* Add hover effect */
+      }
+      
+      .question h5 {
+        margin-top: 0;
+        color: #8a4d76;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      
+      .question p {
+        margin-bottom: 15px;
+        color: #007d8c;
+      }
+      
+      .question a {
+        display: inline-block;
+        background-color: #ff6b6b;
+        color: #fff;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+      
+      .question a:hover {
+        background-color: #ff4757;
+      }
+      .container {
+        max-width: 900px;
+        margin: 100px auto;
+      }
+      /* .container {
+        position: relative;
+      } */
+      
+      #new-question-form {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      #new-question-form input[type="text"],
+      #new-question-form button {
+        width: 500px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      #new-question-form button {
+        background-color: #ff6b6b;
+        color: #fff;
+        padding: 7px 13px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        border: none;
+        font-size: 1rem;
+        max-width: 100px;
+      }
+      
+      #new-question-form button:hover {
+        background-color: #f55858;
+      }
+
+      .answer {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 3px 10px rgba(255, 107, 107, 0.368); /* Add shadow effect */
+        transition: transform 0.3s ease; /* Add transition effect */
+      }
+
+      .answer p {
+        margin-bottom: 15px;
+        color: #007d8c;
+      }
+      
+      .answer a {
+        display: inline-block;
+        background-color: #ff6b6b;
+        color: #fff;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+    </style>
+
+    
+    <title>Questions</title>
+  </head>
+  <body>
+    <div class="main_container">
+      <nav>
+        <a href="#" id="logo-link"><img src="logo.png" alt="Logo" /></a>
+        <ul class="flex justify-center">
+
+          <li><a href="{% url 'logout' % }" id="logout-btn">Logout</a></li>
+          <li><a href="#" id="chatbot-link">Chatbot</a></li>
+        </ul>
+      </nav>
+      <div class="container">
+
+        
+
+
+        <div class="question">
+          <h5>{{question.0.question}}</h5>
+          <p>{{question.0.description}}</p>
+        </div>
+
+        {%for row in discussions %}
+        <div class="answer">
+          <p>{{row.answer}}</p>
+        </div>
+        {% endfor %}
+
+        <!--  input field -->
+        <form action='{% url "add_discussion" %}' id="new-question-form" method='post' >
+          {%csrf_token%}
+          <input type="text" placeholder="Add your Thoughts..." name='add_discussion'/>
+          <input type='hidden' value='{{question.0.id}}' name='question_id'>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

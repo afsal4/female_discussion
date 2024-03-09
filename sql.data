@@ -1,0 +1,33 @@
+CREATE TABLE login (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL
+);
+
+
+
+
+CREATE TABLE user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    login_id INTEGER,
+    FOREIGN KEY (login_id) REFERENCES login(id)
+);
+
+CREATE TABLE questions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question TEXT,
+    description TEXT, 
+    login_id INTEGER,
+    FOREIGN KEY (login_id) REFERENCES login(id)
+
+);
+
+CREATE TABLE discussion (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    answer TEXT,
+    question_id INTEGER,
+    FOREIGN KEY(question_id) REFERENCES questions(id)
+);
