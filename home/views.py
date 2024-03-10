@@ -4,7 +4,7 @@ from django.shortcuts import HttpResponse
 import requests
 
 db = SQL(
-    "sqlite:////home/afsal/Desktop/Github/womens_health_discussion/female_discussion/data.db"
+    "sqlite:////workspaces/female_discussion/data.db"
 )
 
 
@@ -179,9 +179,9 @@ def articles(request):
         data = datada
     else:
         url = ('https://newsapi.org/v2/everything?'
-       'q=Apple&'
+       'q=womens+health&'
        'sortBy=popularity&'
-       'apiKey=fill this section')
+       'apiKey=')
 
 
 
@@ -194,11 +194,72 @@ def articles(request):
 
         data = res['articles']
         datada = data
-    
+    print(data[0]["content"])
     context = {
         'data' : data
     }
     return render(request, 'articles.html', context)
+
+
+class bot:
+    message = []
+    def bot(self, resume, job_description):
+            
+        llm = self.resume_llm
+        
+        
+        template_1 = """
+        
+        you are an evaluation program for resume:
+        
+        the score would be based on the following details:
+        * resume neatness
+        * skills that have direct influence on job description
+        * the clarity of the descriptions that is provided in resume
+        * the projects that are mentioned which is related to the job description
+        * if the resume is really good score really high and if it is really bad score really low be accurate
+        
+        score should be between 1 to 4: 
+        4 means really good resume 
+        3 means resume is good and average
+        2 means resume can be considered but can be better
+        1 means resume is bad
+        
+        the details of the resume and Job Description are given below:
+        Resume: {resume}
+        Job Description: {job_description}
+        
+        Only return the score no need of any description should only answer in digits and nothing else
+        Only in this format and nothing else:
+        
+        Score: ..
+        
+        """
+        
+        
+        # template for scoring
+        prompt = PromptTemplate(
+            input_variables=['resume', 'job_description'],
+            template=template_1
+        )
+        
+        # chaining the model and the template 
+        chain = LLMChain(llm=llm, prompt=prompt, output_key='score')
+        
+        # response from the llm model 
+        response = chain.invoke({'job_description': job_description, 'resume': resume})
+        
+        # cleaning the score output from llm
+        score = response['score'].strip().split()
+        
+        # getting the cleaned scores 
+        score = list(filter(lambda x: x.isdigit(), score))
+        resume_score = int(score[0])
+        
+        self.resume_score = resume_score
+        
+        return resume_score
+
     
     
     

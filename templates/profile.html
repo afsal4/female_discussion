@@ -7,6 +7,7 @@
         padding: 0;
         box-sizing: border-box;
         font-family: "Raleway", sans-serif;
+        background-color: #ebe1e8;
       }
       /* *********** */
       /* **navbar** */
@@ -98,8 +99,8 @@
       }
       
       .profile-picture img {
-        width: 100px; /* Adjust size as needed */
-        height: 100px;
+        width: 80px; /* Adjust size as needed */
+        height: 80px;
         border-radius: 50%; /* Make it round */
         margin-right: 20px;
       }
@@ -169,7 +170,19 @@
       .user-bio {
         max-width: 400px;
       }
-      
+      .edit-btn{
+        font-size: 15px;
+        color: black;
+       border: none ;
+        font-weight: 500;
+        background-color: #edc1de;
+        border-radius: 6px;
+        padding:3px 8px;
+      }
+      .edit-btn:hover{
+        text-decoration: underline;
+       
+      }
     </style>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -186,8 +199,10 @@
     <nav>
       <a href="#" id="logo-link"><img src="logo.png" alt="Logo" /></a>
       <ul class="flex justify-center">
-        <li><a href="{% url 'logout' %}" id="logout-btn">Logout</a></li>
+        <li><a href="#" id="chatbot-link">Articles</a></li>
+    
         <li><a href="#" id="chatbot-link">Chatbot</a></li>
+        <li><a href="{% url 'logout' %}" id="logout-btn">Logout</a></li>
       </ul>
     </nav>
     <div class="container">
@@ -196,12 +211,14 @@
           <img src="poster-de-black-adam-10400.jpg" alt="Profile Picture" />
         </div>
         <div class="profile-details flex-column justify-start">
-          <h1>User Name</h1>
+          <h4>User Name</h1>
           <div class="user-bio">
             <p>
               User Bio Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Sed et ultricies magna.
             </p>
+           <button class="edit-btn">Edit
+           </buttton>
           </div>
           <!-- Other user details like followers, following, etc. can be added here -->
         </div>
