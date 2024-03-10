@@ -3,9 +3,20 @@ from cs50 import SQL
 from django.shortcuts import HttpResponse
 import requests
 
+from langchain.schema import AIMessage, SystemMessage, HumanMessage
+
+
+import os
+import dotenv
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+
 db = SQL(
     "sqlite:////workspaces/female_discussion/data.db"
 )
+
+os.environ['OPENAI_API_KEY'] = ''
 
 
 
@@ -136,6 +147,7 @@ def discussion(request):
     context = {
         "question": question,
         "discussions": answers,
+        'login_id': request.session['login_id']
     }
 
     return render(request, "discussion.html", context)
@@ -144,12 +156,14 @@ def discussion(request):
 def add_discussion(request):
     result = request.POST["add_discussion"].strip()
     question_id = request.POST['question_id']
-    print(question_id, result)
+    login_id = request.session['login_id']
+
     if result:
         db.execute(
-            "INSERT INTO discussion (answer, question_id) VALUES (?, ?)",
+            "INSERT INTO discussion (answer, question_id, login_id) VALUES (?, ?, ?)",
             result,
             question_id,
+            login_id
         )
     return redirect('discussion')
 
@@ -181,9 +195,7 @@ def articles(request):
         url = ('https://newsapi.org/v2/everything?'
        'q=womens+health&'
        'sortBy=popularity&'
-       'apiKey=')
-
-
+       'apiKey=apikey')
 
         response = requests.get(url)
 
@@ -194,71 +206,105 @@ def articles(request):
 
         data = res['articles']
         datada = data
-    print(data[0]["content"])
+
+    if request.method == "POST":
+        search = request.POST['search_article']
+        search = "+".join(search.split())
+        url = ('https://newsapi.org/v2/everything?'
+       'q='+search+'&'
+       'sortBy=popularity&'
+       'apiKey=18d6d6c5963d4a52a44c74c2d325d598')
+
+        response = requests.get(url)
+
+        res = response.json()
+
+        if res['status'] != 'ok':
+            return HttpResponse('error occured')
+
+        data = res['articles']
+        datada = data
+
     context = {
         'data' : data
     }
     return render(request, 'articles.html', context)
 
 
+qna = []
+b = None
+
+
+def chat(request):
+
+    global qna
+    global b
+
+    qna = []
+
+    b = bot()
+    question = b.get_question('hi')
+
+    qna.append({'question':question, 'answer': None})  
+
+    return redirect('chat_bot')
+
+def chat_bot(request):
+    global qna
+    global b 
+    if request.method == 'POST':
+        answer = request.POST['question']
+        qna[-1]['answer'] = answer 
+
+        question = b.get_question(answer)
+
+        qna.append({'question':question, 'answer': None})  
+
+    return render(request, 'chat.html', {'data': qna}) 
+
+def remove_discussion(request):
+    login_id = request.session['login_id']
+    
+    discussion_id = request.POST['remove']
+    db.execute('DELETE FROM discussion WHERE login_id = ? and id = ?', login_id, discussion_id)
+    return redirect('discussion')
+
+
+
+
+
 class bot:
-    message = []
-    def bot(self, resume, job_description):
-            
-        llm = self.resume_llm
+    message = [SystemMessage(content="""
         
-        
-        template_1 = """
-        
-        you are an evaluation program for resume:
-        
-        the score would be based on the following details:
-        * resume neatness
-        * skills that have direct influence on job description
-        * the clarity of the descriptions that is provided in resume
-        * the projects that are mentioned which is related to the job description
-        * if the resume is really good score really high and if it is really bad score really low be accurate
-        
-        score should be between 1 to 4: 
-        4 means really good resume 
-        3 means resume is good and average
-        2 means resume can be considered but can be better
-        1 means resume is bad
-        
-        the details of the resume and Job Description are given below:
-        Resume: {resume}
-        Job Description: {job_description}
-        
-        Only return the score no need of any description should only answer in digits and nothing else
-        Only in this format and nothing else:
-        
-        Score: ..
+        you are an personal chat bot for a user things that you should do while interacting:
+
+        * ask about the problems that the user is facing 
+        * ask the details of the problem 
+        * if the problems is health related ask for symptoms etc
+        * help the person if he/she is facing emotional scars
+        * answer him how to solve or cure the problem they are facing
+        * should only replay within 100 character like chatting
         
         """
+    )]
+    chat_bot = ChatOpenAI(temperature=.5)
+
+
+
+    def get_question(self, answer=''):
+            
+        llm = self.chat_bot
         
-        
-        # template for scoring
-        prompt = PromptTemplate(
-            input_variables=['resume', 'job_description'],
-            template=template_1
-        )
-        
-        # chaining the model and the template 
-        chain = LLMChain(llm=llm, prompt=prompt, output_key='score')
+        if answer:
+            self.message.append(HumanMessage(answer))
         
         # response from the llm model 
-        response = chain.invoke({'job_description': job_description, 'resume': resume})
+        response = llm.invoke(input=self.message).content
+        print(response)
+        self.message.append(AIMessage(response))
         
-        # cleaning the score output from llm
-        score = response['score'].strip().split()
-        
-        # getting the cleaned scores 
-        score = list(filter(lambda x: x.isdigit(), score))
-        resume_score = int(score[0])
-        
-        self.resume_score = resume_score
-        
-        return resume_score
+        return response
+
 
     
     

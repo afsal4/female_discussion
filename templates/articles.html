@@ -16,7 +16,7 @@
       }
 
       .header {
-        background-color: #8a2be2; /* Violet color for header */
+        background-color: #8a4d76 ; /* Violet color for header */
         color: #fff;
         padding: 10px;
         text-align: center;
@@ -71,7 +71,7 @@
       .article-title {
         font-size: 18px;
         font-weight: bold;
-        color: #8a2be2; /* Violet color */
+      
         margin-bottom: 10px;
       }
 
@@ -179,7 +179,7 @@
   .nav-title{
     margin-left:10px;
   }
-  #openModalBtn{
+  .Btn{
     display: inline-block;
         background-color: #ff6b6b;
         color: #fff;
@@ -189,6 +189,11 @@
         transition: background-color 0.3s ease;
         border:none;
 
+  }
+  .nav_links{
+    text-decoration: none;
+    color:white;
+    font-size:15px;
   }
     </style>
      <link
@@ -208,13 +213,14 @@
         id="search-form"
         method="post"
       >
+      {%csrf_token%}
        
-        <input class="search_input" type="search" placeholder="Search..." name="question" />
+        <input class="search_input" type="search" placeholder="Search..." name="search_article" />
         <button class="search-btn" type="submit">Search</button>
       </form>
-        <div class="nav_componets">Home</div>
-        <div class="nav_componets">profile</div>
-        <div class="nav_componets">Logout</div>
+        <div class="nav_componets"><a class="nav_links" href="{% url 'home' %}">Home</a></div>
+        <div class="nav_componets"><a class="nav_links"  href="{% url 'profile' %}">Profile</a></div>
+        <div class="nav_componets"><a class="nav_links"  href="{% url 'logout' %}">Logout</a></div>
       </div>
 
     </div>
@@ -235,7 +241,7 @@
         <div class="article-description">{{ article.description }}</div>
         <div class="article-author">{{ article.author }}</div>
         <!-- Button trigger modal -->
-        <button id='openModalBtn{{forloop.counter}}' onclick="displayModal({{forloop.counter}})">Read Article</button>
+        <button id='openModalBtn{{forloop.counter}}' class="Btn"onclick="displayModal({{forloop.counter}})">Read Article</button>
 
 
       

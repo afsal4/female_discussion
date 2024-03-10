@@ -29,5 +29,7 @@ CREATE TABLE discussion (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     answer TEXT,
     question_id INTEGER,
-    FOREIGN KEY(question_id) REFERENCES questions(id)
+    login_id INTEGER,
+    FOREIGN KEY(question_id) REFERENCES questions(id),
+    FOREIGN KEY(login_id) REFERENCES login(id)
 );

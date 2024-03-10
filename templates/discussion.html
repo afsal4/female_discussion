@@ -26,7 +26,9 @@
         box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
         font-family: "Raleway", sans-serif;
       }
-      
+      nav:hover {
+        background-color: #6a1a9e; /* Darker violet color on hover */
+      }
       nav a#logo-link {
         float: left;
         margin-right: 2rem;
@@ -234,10 +236,11 @@
   height: 30px; 
   border-radius: 50%; 
   margin-right: 10px; 
-
+}
 .username {
   font-weight: bold;
 }
+
 
     </style>
 
@@ -249,12 +252,12 @@
       <nav>
         <a href="#" id="logo-link"><img src="logo.png" alt="Logo" /></a>
         <ul class="flex justify-center">
-          <li><a href="{% url 'logout' % }" id="logout-btn">Home</a></li>
+          <li><a href="{% url 'home' %}" id="logout-btn">Home</a></li>
       
-          <li><a href="{% url 'logout' %}" id="logout-btn">Article</a></li>
-          <li><a href="{% url 'logout' % }" id="logout-btn">profile</a></li>
-          <li><a href="{% url 'logout' % }" id="logout-btn">Logout</a></li>
-          <li><a href="#" id="chatbot-link">Chatbot</a></li>
+          <li><a href="{% url 'articles' %}" id="logout-btn">Article</a></li>
+          <li><a href="{% url 'profile' %}" id="logout-btn">profile</a></li>
+          <li><a href="{% url 'logout' %}" id="logout-btn">Logout</a></li>
+          <li><a href="{% url 'chat' %}" id="chatbot-link">Chatbot</a></li>
         </ul>
       </nav>
       <div class="container">
@@ -285,7 +288,14 @@
           </svg>
           
           </div> -->
-          <button class="btn-Remove">Remove</button>
+          {% if login_id == row.login_id %}
+          <form action="{% url 'remove_discussion' %}" method="post">
+            {%csrf_token%}
+            <button class="btn-Remove" type="submit">Remove</button>
+            <input type="hidden" value="{{row.id}}" name="remove">
+            
+          </form>
+          {% endif %}
           </div>
         </div>
         {% endfor %}
@@ -295,7 +305,7 @@
           {%csrf_token%}
           <input type="text" placeholder="Add your Thoughts..." name='add_discussion'/>
           <input type='hidden' value='{{question.0.id}}' name='question_id'>
-          <button type="submit" class="submit-btn">Submit</button>
+          <button type="submit" class="submit-btn mt-4">Submit</button>
         </form>
       </div>
     </div>

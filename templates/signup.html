@@ -54,7 +54,7 @@
       button:hover {
         background-color: #f45341;
       }
-h/signup/signup.html      
+/* h/signup/signup.html       */
     </style>
     <title>Sign Up page</title>
   </head>
@@ -67,7 +67,8 @@ h/signup/signup.html
         <input type="email" placeholder="Email" name='email'/>
         <input type="password" placeholder="Password" name='password'/>
         <button type="submit">Sign Up</button>
-        <button>Login</button>
+        <button><a href="{% url 'login' %}">Login</a></button>
+       
       </form>
     </div>
   </body>
